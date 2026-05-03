@@ -1,0 +1,36 @@
+image: node:18.5.0-alpine3.16
+
+stages:
+  - build-website
+  - deploy
+
+## all branchs can build html
+build-website:
+  image: timbru31/node-alpine-git:12
+  tags: [pages]
+  stage: build-website
+  variables:
+    DOC_DEPLOY_PATH: "/MISA-MD/MDoc/"
+  before_script:
+    - yarn install --registry https://registry.npm.taobao.org 
+  script:
+    - yarn build
+  cache:
+    key: docusaurus-3.7 # caching by docusaurus version.
+    paths:
+    - node_modules/
+  artifacts:
+    paths:
+    - build
+
+pages:
+  tags: [pages]
+  stage: deploy
+  script:
+  - mv build public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  - private-main
