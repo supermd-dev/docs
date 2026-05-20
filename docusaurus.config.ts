@@ -146,6 +146,26 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+  plugins:[
+    function customWebpackPlugin() {
+      return {
+        name: 'asciinema-webpack-plugin',
+        configureWebpack() {
+          return {
+            module: {
+              rules:[
+                {
+                  // match .cast files.
+                  test: /\.cast$/,
+                  type: 'asset/resource',
+                },
+              ],
+            },
+          };
+        },
+      };
+    },
+  ],
 };
 
 export default config;
