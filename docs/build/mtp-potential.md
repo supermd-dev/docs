@@ -5,17 +5,17 @@ title: MTP 机器学习势函数集成
 sidebar_label: MTP 势函数
 ---
 
-[mlip-2](https://gitlab.com/ashapeev/mlip-2) 是一种基于机器学习方法的势函数，其基于 moment tensor potentials (MTPs) 方法，详细信息可以在[此处](https://mlip.skoltech.ru)或者 [mlip-2 的代码仓库](https://gitlab.com/ashapeev/mlip-2) 获取。
+[mlip-3](https://gitlab.com/ashapeev/mlip-3) 是一种基于机器学习方法的势函数，其基于 moment tensor potentials (MTPs) 方法，详细信息可以在[此处](https://mlip.skoltech.ru)或者 [mlip-2 的代码仓库](https://gitlab.com/ashapeev/mlip-3) 获取。
 
-现在，MISA-MD 已经支持了 MLIP-2 势函数（注：mlip-2 是 MTP 势的一种实现）。
+现在，SuperMD 已经支持了 MLIP-3 势函数（注：mlip-3 是 MTP 势的一种实现）。
 
-## mlip-2 与 MISA-MD 的集成
+## mlip-3 与 SuperMD 的集成
 
-### 安装 mlip-2
-在开始之前，请先按照 mlip-2 的支持文档，相关的编译器等环境在检查您的系统里面是否都已经被安装了。
-除了 MISA-MD 所需要的 MPI、CMake、C++/C 编译器外，mlip-2 还需要 Fortran 编译器。
+### 安装 mlip-3
+在开始之前，请先按照 mlip-3 的支持文档，相关的编译器等环境在检查您的系统里面是否都已经被安装了。
+除了 SuperMD 所需要的 MPI、CMake、C++/C 编译器外，mlip-2 还需要 Fortran 编译器。
 
-编辑 MISA-MD 的 pkg.yaml, 添加 mlip-2 为依赖：
+编辑 SuperMD 的 pkg.yaml, 添加 mlip-2 为依赖：
 ```diff
 @@ -16,6 +16,7 @@ dependencies:
      git.hpcer.dev/HPCer/MISA-MD/potential: {version: v0.3.0, target: pot}
@@ -53,15 +53,15 @@ set(SOURCES
 ```
 :::
 
-### 编译支持 mlip-2 势函数的 MISA-MD
+### 编译支持 mlip-2 势函数的 SuperMD
 ```bash
 cmake -B./build -S ./ -DCMAKE_BUILD_TYPE=Release \
 -DMD_FEATURE_POT_MLIP2_ENABLE_FLAG=ON
 cmake --build ./build -j 4
 ```
 
-## 运行基于 mlip-2 的 MISA-MD
-1. 修改 MISA-MD 配置文件 config.yaml：
+## 运行基于 mlip-3 的 SuperMD
+1. 修改 SuperMD 配置文件 config.yaml：
 ```diff
 potential: # potential file config
     format: "setfl"
@@ -76,7 +76,7 @@ mtp-filename   pot.mtp
 select         FALSE  # <bool>        Activates/deactivates selection (active learning)
 ```
 2. 运行
-正常运行 MISA-MD 即可，无特殊设置
+正常运行 SuperMD 即可，无特殊设置
 ```bash
-mpirun -n 4 ../build/bin/misamd -c config.yaml
+mpirun -n 4 ../build/bin/supermd -c config.yaml
 ```

@@ -1,33 +1,33 @@
 ---
 sidebar_position: 1
 id: run-md
-title: "运行  MISA-MD"
-sidebar_label: "运行 MISA-MD"
+title: "运行  SuperMD"
+sidebar_label: "运行 SuperMD"
 ---
 
 
-我们假设你通过以上步骤已经完成了 MISA-MD 的编译构建工作，
+我们假设你通过以上步骤已经完成了 SuperMD 的编译构建工作，
 编译完成的二进制可执行文件位于`$MD_PATH/build/bin/` 目录下。
 
 ## 1.运行
-你可以使用 `mpirun` 命令运行并行的 MISA-MD 分子动力学软件。
-例如，下面的示例中，使用4个MPI进程运行 MISA-MD，并指定配置文件路径为和example同一目录下的`config.yaml`文件。
+你可以使用 `mpirun` 命令运行并行的 SuperMD 分子动力学软件。
+例如，下面的示例中，使用4个MPI进程运行 SuperMD，并指定配置文件路径为和example同一目录下的`config.yaml`文件。
 
 ?> 关于配置文件的相关说明请参考**配置项**等相关章节。
 
 ```bash
 cd $MD_PATH/example
-mpirun -n 4 ../build/bin/misamd -c config.yaml
+mpirun -n 4 ../build/bin/supermd -c config.yaml
 ```
 
-更多信息可以通过执行`$MD_PATH/build/bin/misamd --help`命令查看。
+更多信息可以通过执行`$MD_PATH/build/bin/supermd --help`命令查看。
 
 ```bash
 $ cd $MD_PATH
-$ build/bin/misamd --help
-  build/bin/misamd {OPTIONS}
+$ build/bin/supermd --help
+  build/bin/supermd {OPTIONS}
 
-    This is MISA-MD program.
+    This is SuperMD program.
 
   OPTIONS:
 
