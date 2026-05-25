@@ -12,33 +12,29 @@ SuperMD 从 v0.4.0 开始，使用 [yaml](https://yaml.org) 格式开始作为�
 以下展示了 SuperMD 配置文件的部分示例：
 ```yaml
 # <a href='https://yaml.org'>yaml</a> configure file for SuperMD application,
-# writen by <a href='mailto:genshenchu@gmail.com'>genshen</a>"
+# written by <a href='mailto:genshenchu@gmail.com'>genshen</a>"
 
 title: "SuperMD Configure File"
 version: "0.4.0"
-contributors:
-  original_author: "BaiHe"
-  original_author_email: "baihe_ustb@163.com"
-  developers: ["BaiHe<baihe_ustb@163.com>", "ChuGenshen<genshenchu@gmail.com>"]
-  organization: "USTB"
 
 simulation:
-  phasespace: [50, 50, 50]
-  cutoff_radius_factor: 1.96125
-  lattice_const: 2.85532
-  def_timesteps_length: 0.001
+  phasespace: [50, 50, 50] # box size, the count of lattice at each dimension. #int array type
+  cutoff_radius_factor: 1.96125  # the real cutoff radius is cutoff_radius_factor*lattice_const , double type
+  lattice_const: 2.85532   # lattice const, double type
+  def_timesteps_length: 0.001  # simulation time steps length for each timestep, double type.
 
-potential:
-  type: "setfl"
-  file_path: "FeCuNi.eam.alloy"
+potential: # potential file config
+  format: "setfl" # string type
+  type: "eam/alloy" # string type. Potential type used for simulation. Its value can be "eam/fs" or "eam/alloy".
+  file_path: "FeCuNi.eam.alloy" # string type
 
-creation:
-  create_phase: true
-  create_seed: 466953
-  create_t_set: 600
-  alloy:
-    create_seed: 1024
-    types:
+creation: #  create atoms.
+  create_phase: true  # boolean type. true: create atoms, false: ignore.
+  create_seed: 466953 # int type, for create mode
+  create_t_set: 600 # temperature double type, for creation mode
+  alloy: # types of alloy
+    create_seed: 1024 # random seek for creating atoms in alloy material.
+    types: # "weight" must be integer type. e.g. Fe:Cu:Ni = 95:2:3
       - name: Fe
         mass: 55.845
         weight: 97
@@ -49,24 +45,35 @@ creation:
         mass: 58.6934
         weight: 1
 
+read_phase: # read atoms data from a file. It can be used for restart.
+  enable: false
+  version: 0
+  file_path: "./10.atom" # string type, for read mode.
+  init_step: 10 # initial step for simulation
+
 output:
   atom_dump:
     presets:
       - name: my_dump
         region: [ 25.0, 25.0, 25.0, 80.4, 80.4, 80.4 ]
-        mode: "copy"
-        file_path: "misa_mdl.{}.out"
-        by_frame: true
+        mode: "bin" # output mode,string, "bin"(write all atom into a binary file) or "debug" (output atoms directly), or "dump" (the same as lammps dump);
+        file_path: "misa_mdl.{}.out" # string,filename or path of dumped atoms, default value is "misa_mdl.out"
+        by_frame: true # bool type, used in copy mode, dump to multiple files, one file for each frame.
+        with: [location, velocity] # or "force", select what to dump
       - name: collision_dump
-        mode: "copy"
-        file_path: "before_collision.{}.out"
+        mode: "dump"
+        file_path: "before_collision.{}.dump"
         by_frame: true
   thermo:
-    interval: 0
+    presets:
+      - name: my_thermo
+        with: [step, time, temp, pe, ke, etotal]
   logs:
-    logs_mode: "console"
-    logs_filename: ""
+    logs_mode: "console" # logs mode, string; values: "console" output will be printed on console/terminal, "file" logs will be saved in files.
+    logs_filename: "" # filename of log file, string; if leaving empty, program will generate an unique log filename. (And by default, output will append the end of log file.).
 
+#stage_template: # stage template may be a feature in next version
+# run stages one by one
 stages:
   - name: rescale
     step_length: 0.001
@@ -74,21 +81,27 @@ stages:
     dump:
       use: my_dump
       every_steps: 2
-    rescale:
+    rescale: # rescale to a temperature.
       t: 600
-      every_steps: 2
+      every_steps: 2 # rescale every n steps
 
   - name: collision
     step_length: 0.0001
     steps: 8
-    dump:
+    dump: # dump system atom before collision
       use: collision_dump
       every_steps: 1
+    thermo_logs:
+      use: my_thermo
+      every_steps: 2
+    #    del_atoms:
+    #      region: [ 25.0, 25.0, 25.0, 80.4, 80.4, 80.4 ]
+    #      step: 4 # step relative to current stage.
     set_v:
-      collision_step: 2
-      lat: [2, 2, 2, 0]
-      energy: 6.8
-      direction: [1.0, 1.0, 1.0]
+      collision_step: 2  # unsigned long type, step relative to current stage, not global steps.
+      lat: [2, 2, 2, 0]  # int array type
+      energy: 6.8  # double, unit: eV, default: 0
+      direction: [1.0, 1.0, 1.0]  # double array type, pka direction
 
   - name: run
     step_length: 0.001
